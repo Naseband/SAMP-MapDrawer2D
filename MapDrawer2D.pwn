@@ -35,7 +35,7 @@ Draws a Bitmap of the World in 2D.
 #define BASE_COLOR_B			155
 
 #define WATER_COLOR_R			0 // Color for water
-#define WATER_COLOR_G			0 
+#define WATER_COLOR_G			0
 #define WATER_COLOR_B			0
 
 // Other defines
@@ -54,6 +54,8 @@ new gCAObjectIDs[MAX_COL_OBJECTS] = {-1, ...}, gNumCAObjectIDs = 0;
 
 public OnFilterScriptInit()
 {
+	CA_Init();
+	
 	printf("Drawing BMP with the size of "#BMP_SIZE_X"x"#BMP_SIZE_Y" px");
 
 	#if GRAB_OBJECTS == true
