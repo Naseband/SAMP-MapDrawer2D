@@ -8,7 +8,7 @@ You can configure resolution, World Bounds, Colors and more in the script.
 To draw really big Maps, it's recommended to use a Memory Plugin for buffering the Bitmap.
 See functions *Bitmap_Set* and *Bitmap_Get*.
 
-If your Script does not already use ColAndreas for your maps, set the *GRAB_OBJECTS* define to *true* to temporarily create Streamer Objects in the specified virtual world as Collision Objects.
+If your Script does not already use ColAndreas for your maps, set the *GRAB_OBJECTS* define to *true* to grab all Streamer Objects from the specified virtual world and temporarily create them as Collision Objects.
 
 # OC.inc
 
