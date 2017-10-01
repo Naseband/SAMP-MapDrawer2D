@@ -35,7 +35,7 @@ Draws a Bitmap of the World in 2D.
 #define BASE_COLOR_B			155
 
 #define WATER_COLOR_R			0 // Color for water
-#define WATER_COLOR_G			0
+#define WATER_COLOR_G			0 
 #define WATER_COLOR_B			0
 
 // Other defines
