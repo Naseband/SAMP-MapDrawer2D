@@ -16,15 +16,17 @@ Draws a Bitmap of the World in 2D.
 
 // Misc
 #include <OC>
+#include <farray>
 
 // Settings
 
 #define GRAB_OBJECTS			false // Grabs streamer objects from specified world and temporarily creates them as CA Objects
 #define GRAB_WORLD_ID			-1 // -1 = any world
+#define GRAB_INTERIOR_ID		0 // -1 = any interior
 #define MAX_COL_OBJECTS			25000
 
-#define BMP_SIZE_X				1000 // X and Y must be even numbers
-#define BMP_SIZE_Y				1000
+#define BMP_SIZE_X				6000 // X and Y must be even numbers
+#define BMP_SIZE_Y				6000
 
 #define COL_WEIGHT_STEEPNESS	1.0 // 0.0 - 1.0 | weight of terrain angle for colors
 #define COL_WEIGHT_HEIGHT		1.0 // 0.0 - 1.0 | terrain height
@@ -44,7 +46,7 @@ Draws a Bitmap of the World in 2D.
 
 // Vars, etc
 
-new gBitmap[BMP_SIZE_TOTAL];
+new gFAID = -1;
 
 #if GRAB_OBJECTS == true
 new gCAObjectIDs[MAX_COL_OBJECTS] = {-1, ...}, gNumCAObjectIDs = 0;
@@ -55,22 +57,21 @@ new gCAObjectIDs[MAX_COL_OBJECTS] = {-1, ...}, gNumCAObjectIDs = 0;
 public OnFilterScriptInit()
 {
 	CA_Init();
-	
-	printf("Drawing BMP with the size of "#BMP_SIZE_X"x"#BMP_SIZE_Y" px");
+
+	gFAID = CreateFileArray(BMP_SIZE_TOTAL * 3, false, .mode = F_ARRAY_MODE_BYTE);
 
 	#if GRAB_OBJECTS == true
 
-		new Float:ox, Float:oy, Float:oz, Float:orx, Float:ory, Float:orz, model;
+		new Float:ox, Float:oy, Float:oz, Float:orx, Float:ory, Float:orz;
 
 		for(new i = 0, j = Streamer_GetUpperBound(STREAMER_TYPE_OBJECT); i < j && gNumCAObjectIDs != MAX_COL_OBJECTS; i ++)
 		{
-			if(!IsValidDynamicObject(i) || (GRAB_WORLD_ID != -1 && !Streamer_IsInArrayData(STREAMER_TYPE_OBJECT, i, E_STREAMER_WORLD_ID, GRAB_WORLD_ID))) continue;
+			if(!IsValidDynamicObject(i) || (GRAB_WORLD_ID != -1 && !Streamer_IsInArrayData(STREAMER_TYPE_OBJECT, i, E_STREAMER_WORLD_ID, GRAB_WORLD_ID)) || (GRAB_INTERIOR_ID != -1 && !Streamer_IsInArrayData(STREAMER_TYPE_OBJECT, i, E_STREAMER_INTERIOR_ID, GRAB_INTERIOR_ID))) continue;
 
 			GetDynamicObjectPos(i, ox, oy, oz);
 			GetDynamicObjectRot(i, orx, ory, orz);
-			model = Streamer_GetIntData(STREAMER_TYPE_OBJECT, i, E_STREAMER_MODEL_ID);
 
-			gCAObjectIDs[gNumCAObjectIDs] = CA_CreateObject(model, ox, oy, oz, orx, ory, orz, true);
+			gCAObjectIDs[gNumCAObjectIDs] = CA_CreateObject(Streamer_GetIntData(STREAMER_TYPE_OBJECT, i, E_STREAMER_MODEL_ID), ox, oy, oz, orx, ory, orz, true);
 
 			gNumCAObjectIDs ++;
 		}
@@ -87,6 +88,8 @@ public OnFilterScriptInit()
 
 	#endif
 
+	DestroyFileArray(gFAID);
+
 	return 1;
 }
 
@@ -96,14 +99,12 @@ public OnFilterScriptInit()
 stock Bitmap_Get(x, y, &r, &g, &b)
 {
 	if(x < 0 || x >= BMP_SIZE_X || y < 0 || y >= BMP_SIZE_Y) return 0;
-		
-    new rgb;
 
-    rgb = gBitmap[getid(x, y)];
+    new id = getid(x, y) * 3;
 
-    r = (rgb >> 16) & 255;
-    g = (rgb >> 8) & 255;
-    b = rgb & 255;
+    r = getByte(gFAID, id);
+    g = getByte(gFAID, id + 1);
+    b = getByte(gFAID, id + 2);
     
     return 1;
 }
@@ -121,9 +122,11 @@ stock Bitmap_Set(x, y, r, g, b)
 	if(b > 255) b = 255;
 	else if(b < 0) b = 0;
 
-    new rgb = (r * 256 * 256) + (g * 256) + b;
+	new id = getid(x, y) * 3;
 
-    gBitmap[getid(x, y)] = rgb;
+    setByte(gFAID, id, r);
+    setByte(gFAID, id + 1, g);
+    setByte(gFAID, id + 2, b);
     
     return 1;
 }
