@@ -43,6 +43,7 @@ Draws a Bitmap of the World in 2D.
 // Other defines
 
 #define BMP_SIZE_TOTAL	(BMP_SIZE_X * BMP_SIZE_Y)
+#define getid(%1,%2)	((%2*BMP_SIZE_X)+%1)
 
 // Vars, etc
 
@@ -66,7 +67,19 @@ public OnFilterScriptInit()
 
 		for(new i = 0, j = Streamer_GetUpperBound(STREAMER_TYPE_OBJECT); i < j && gNumCAObjectIDs != MAX_COL_OBJECTS; i ++)
 		{
-			if(!IsValidDynamicObject(i) || (GRAB_WORLD_ID != -1 && !Streamer_IsInArrayData(STREAMER_TYPE_OBJECT, i, E_STREAMER_WORLD_ID, GRAB_WORLD_ID)) || (GRAB_INTERIOR_ID != -1 && !Streamer_IsInArrayData(STREAMER_TYPE_OBJECT, i, E_STREAMER_INTERIOR_ID, GRAB_INTERIOR_ID))) continue;
+			if(!IsValidDynamicObject(i)) continue;
+
+			#if GRAB_WORLD_ID != -1
+
+				if(!Streamer_IsInArrayData(STREAMER_TYPE_OBJECT, i, E_STREAMER_WORLD_ID, GRAB_WORLD_ID)) continue;
+
+			#endif 
+
+			#if GRAB_INTERIOR_ID != -1
+
+				if(!Streamer_IsInArrayData(STREAMER_TYPE_OBJECT, i, E_STREAMER_INTERIOR_ID, GRAB_INTERIOR_ID)) continue;
+
+			#endif
 
 			GetDynamicObjectPos(i, ox, oy, oz);
 			GetDynamicObjectRot(i, orx, ory, orz);
@@ -89,8 +102,6 @@ public OnFilterScriptInit()
 	#endif
 
 	DestroyFileArray(gFAID);
-	
-	if(fexist("bmpbuf.tmp")) fremove("bmpbuf.tmp"); // Delete the File Array
 
 	return 1;
 }
@@ -131,11 +142,6 @@ stock Bitmap_Set(x, y, r, g, b)
     setByte(gFAID, id + 2, b);
     
     return 1;
-}
-
-getid(x, y)
-{
-	return (y * BMP_SIZE_X) + x;
 }
 
 DrawBitmap(Float:minx = -3000.0, Float:miny = -3000.0, Float:minz = -50.0, Float:maxx = 3000.0, Float:maxy = 3000.0, Float:maxz = 550.0)
