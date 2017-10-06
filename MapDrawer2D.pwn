@@ -89,6 +89,8 @@ public OnFilterScriptInit()
 	#endif
 
 	DestroyFileArray(gFAID);
+	
+	if(fexist("bmpbuf.tmp")) fremove("bmpbuf.tmp"); // Delete the File Array
 
 	return 1;
 }
