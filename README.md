@@ -5,9 +5,6 @@ Load as Filterscript to begin drawing a BMP File.
 
 You can configure resolution, World Bounds, Colors and more in the script.
 
-To draw really big Maps, it's recommended to use a Memory Plugin for buffering the Bitmap.
-See functions *Bitmap_Set* and *Bitmap_Get*.
-
 If your Script does not already use ColAndreas for your maps, set the *GRAB_OBJECTS* define to *true* to grab all Streamer Objects from the specified virtual world and temporarily create them as Collision Objects.
 
 # OC.inc
@@ -15,6 +12,12 @@ If your Script does not already use ColAndreas for your maps, set the *GRAB_OBJE
 This Include contains an Array for all Model Categories (including SAMP Objects).
 The FS uses it to draw colors based on them.
 
+# farray.inc
+
+FArray offers an Array-like file system to buffer lots of data somewhere else than the stack or header.
+They are slower, but they offer theoretically unlimited space which can be (de)allocated at any time.
+
+__Note:__ Create a folder called *fa* inside your *scriptfiles* directory.
 
 # Example
 
