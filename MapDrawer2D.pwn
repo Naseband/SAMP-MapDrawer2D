@@ -58,7 +58,7 @@ public OnFilterScriptInit()
 {
 	CA_Init();
 
-	gFAID = CreateFileArray(BMP_SIZE_TOTAL * 3, false, .mode = F_ARRAY_MODE_BYTE);
+	gFAID = CreateFileArray(BMP_SIZE_TOTAL * 3, false, .mode = F_ARRAY_MODE_BYTE, .filename = "bmpbuf.tmp");
 
 	#if GRAB_OBJECTS == true
 
